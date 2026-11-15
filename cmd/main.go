@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"ai-personal-agent/internal/storage"
 )
@@ -38,10 +39,17 @@ func main() {
 				fmt.Println("Ошибка: недостаточно аргументов. Использование: add <Дата> <Название>")
 				continue
 			}
-			date := parts[1]
+			dateStr := parts[1]
+
+			_, err := time.Parse("2006-01-02", dateStr)
+			if err != nil {
+				fmt.Println("Ошибка: неверный формат или несуществующая дата. Используйте формат YYYY-MM-DD.")
+				continue
+			}
+
 			title := strings.Join(parts[2:], " ")
-			id := store.AddEvent(title, date)
-			fmt.Printf("Событие '%s' на дату %s успешно добавлено (ID: %d)\n", title, date, id)
+			id := store.AddEvent(title, dateStr)
+			fmt.Printf("Событие '%s' на дату %s успешно добавлено (ID: %d)\n", title, dateStr, id)
 
 		case "list":
 			events := store.ListEvents()
